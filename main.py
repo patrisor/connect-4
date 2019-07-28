@@ -6,11 +6,13 @@ def print_board(b):
 
 # Traverses grid from bottom-up to be as efficient as possible in checking grid
 def update_board(b, i, p):
+    if i >= 7:
+        return -1
     for r in range(len(b) - 1, -1, -1):
         if b[r][i] == 0:
             b[r][i] = (2 if p == "Player 2" else 1)
-            return True
-    return False
+            return 1
+    return 0
 
 def determine_player(p):
     return("Player 1" if p == "Player 2" else "Player 2")
@@ -53,10 +55,11 @@ def game_engine(BOARD, player):
             if not inp.isdigit():
                 print("Not a digit, try again.")
                 continue
-            if update_board(BOARD, int(inp) - 1, player):
+            upd = update_board(BOARD, int(inp) - 1, player)
+            if upd == 1:
                 break
             else:
-                print("Column is full. Find different position.")
+                print(("Column is full. Find different position." if upd == 0 else "Column Doesn't exit. Try Again!"))
         check = check_win(BOARD)
         if ((check == 1) or (check == 2)):
             print_board(BOARD)
