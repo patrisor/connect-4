@@ -1,40 +1,78 @@
 # TODO: Update
 def print_board(b):
-  print(" 1  2  3  4  5  6  7")
-  for r in range(len(b)):
-    print(b[r])
+    print("\n 1  2  3  4  5  6  7")
+    for r in range(len(b)):
+        print(b[r])
 
+# Traverses grid from bottom-up to be as efficient as possible in checking grid
 def update_board(b, i, p):
-  # Traverse array to manipulate it
-  for r in range(len(b) - 1, -1, -1):
-    if b[r][i] == 0:
-      b[r][i] = (2 if p == "Player 2" else 1)
-      return True
-  return False
+    for r in range(len(b) - 1, -1, -1):
+        if b[r][i] == 0:
+            b[r][i] = (2 if p == "Player 2" else 1)
+            return True
+    return False
 
 def determine_player(p):
-  return("Player 1" if p == "Player 2" else "Player 2")
+    return("Player 1" if p == "Player 2" else "Player 2")
 
-def main():
-  BOARD = [[0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0]]
-  player = "Player 2"
-  while True:
-    # Determine player
-    player = determine_player(player)
-    # Print board
-    print_board(BOARD)
-    # User input
-    inp = int(input(player + " Enter position:\n")) - 1
-    # TODO: Update board
-    if update_board(BOARD, inp, player):
-      print("SUCCESS")
-    else:
-      print("Column is Full")
+def check_ties(board):
+    hit = 0
+    for r in range(len(board)):
+        for c in range(len(board[r])):
+            if board[r][c] == 0:
+                hit += 1
+    return (hit == 0)
 
-if __name__=="__main__":
-  main()
+# Thanks to 4castle on StackExchange forums for teaching the algorithm
+# (https://codereview.stackexchange.com/questions/127091/java-connect-four-four-in-a-row-detection-algorithms)
+def check_win(board):
+    for r in range(len(board)):
+        for c in range(len(board[r])):
+            if board[r][c] == 0:
+                continue # don't check empty slots
+            if (((c + 3) < len(board[r])) and (board[r][c] == board[r][c + 1]) and 
+            (board[r][c] == board[r][c + 2]) and (board[r][c] == board[r][c + 3])):
+                return board[r][c] # checks side to side
+            if ((r + 3) < len(board)):
+                if (((board[r][c] == board[r + 1][c]) and (board[r][c] == board[r + 2][c]) and 
+                (board[r][c] == board[r + 3][c])) or (((c + 3) < len(board[r])) and 
+                (board[r][c] == board[r + 1][c + 1]) and (board[r][c] == board[r + 2][c + 2]) and 
+                (board[r][c] == board[r + 3][c + 3])) or (((c - 3) >= 0) and (board[r][c] == board[r + 1][c - 1]) 
+                and (board[r][c] == board[r + 2][c - 2]) and (board[r][c] == board[r + 3][c - 3]))):
+                    return board[r][c] # checks up and diagonally
+    return 0 # no winner found
+
+def game_engine(BOARD, player):
+    while True:
+        player = determine_player(player)
+        print_board(BOARD)
+        while True:
+            inp = input(player + " Enter position:\n")
+            if inp == "q":
+                return(1)
+            if not inp.isdigit():
+                print("Not a digit, try again.")
+                continue
+            if update_board(BOARD, int(inp) - 1, player):
+                break
+            else:
+                print("Column is full. Find different position.")
+        check = check_win(BOARD)
+        if ((check == 1) or (check == 2)):
+            print_board(BOARD)
+            print(("Player 1" if check == 1 else "Player 2") + " has won the game!")
+            break
+        if check_ties(BOARD):
+            print("TIE. No space left on board!")
+            break
+    return(0)
+
+if __name__ == "__main__":
+    BOARD = [[0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0]]
+    player = "Player 2"
+    exit(game_engine(BOARD, player))
