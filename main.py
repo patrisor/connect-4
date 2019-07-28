@@ -6,7 +6,7 @@ def print_board(b):
 
 # Traverses grid from bottom-up to be as efficient as possible in checking grid
 def update_board(b, i, p):
-    if i >= 7:
+    if i >= 7 or i <= -1:
         return -1
     for r in range(len(b) - 1, -1, -1):
         if b[r][i] == 0:
