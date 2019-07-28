@@ -1,11 +1,16 @@
-# TODO: Update
 def print_board(b):
-    print("\n 1  2  3  4  5  6  7")
-    for r in range(len(b)):
-        print(b[r])
+    inp = [[' ' for x in range(7)] for y in range(6)]
+    for r in range(len(b)): #Convert board list to a new string Array
+        for c in range(len(b[r])):
+            if b[r][c] == 0:
+                continue
+            inp[r][c] = ('R' if b[r][c] == 1 else 'Y')
+    print("\n  1   2   3   4   5   6   7")
+    for i in range(len(inp)):
+        print("| " + inp[i][0] + " | " + inp[i][1] + " | " + inp[i][2] + " | " + inp[i][3] + " | " + 
+                inp[i][4] + " | " + inp[i][5] + " | " + inp[i][6] + " |")
 
-# Traverses grid from bottom-up to be as efficient as possible in checking grid
-def update_board(b, i, p):
+def update_board(b, i, p): # Traverses grid from bottom-up to be as efficient as possible in checking grid
     if i >= 7 or i <= -1:
         return -1
     for r in range(len(b) - 1, -1, -1):
@@ -66,6 +71,7 @@ def game_engine(BOARD, player):
             print(("Player 1" if check == 1 else "Player 2") + " has won the game!")
             break
         if check_ties(BOARD):
+            print_board(BOARD)
             print("TIE. No space left on board!")
             break
     return(0)
